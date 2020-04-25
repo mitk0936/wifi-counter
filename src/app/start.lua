@@ -3,7 +3,6 @@ local sntp_helper = require('lib/sntp');
 local file_helper = require('lib/file');
 
 local ok, config = file_helper.read_json_file('static/config.json');
-local known_devices_ok, known_devices = file_helper.read_json_file('static/known-devices.json');
 
 if (ok) then
   wifi_helper.wifi_config_sta(config.wifi.ssid, config.wifi.pwd, wifi.STATIONAP);

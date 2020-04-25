@@ -1,6 +1,4 @@
-local pubsher = require('app/publisher');
-
-return function (config, known_devices)
+return function (config)
   local mqtt_client = mqtt.Client(
     config.device.id, 20,
     config.device.user,
@@ -11,10 +9,12 @@ return function (config, known_devices)
     local start_wifi_scan = require('app/wifi-scan');
     local publish = require('app/publisher')(mqtt_client);
 
-    start_wifi_scan(known_devices, function (topic, value, qos, retain)
+    start_wifi_scan(function (topic, value, qos, retain)
       publish(topic, value, qos, retain);
     end);
   end);
+
+  mqtt_client:lwt('/connectivity', 'offline', 2, 1);
 
   mqtt_client:on('offline', node.restart);
 
