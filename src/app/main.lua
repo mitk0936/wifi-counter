@@ -7,11 +7,17 @@ return function (config)
 
   mqtt_client:on('connect', function ()
     local start_wifi_scan = require('app/wifi-scan');
+    local start_bluetooth_scan = require('app/ble-scan');
+
     local publish = require('app/publisher')(mqtt_client);
 
-    start_wifi_scan(function (topic, value, qos, retain)
+    local publish_callback = function (topic, value, qos, retain)
       publish(topic, value, qos, retain);
-    end);
+      collectgarbage();
+    end
+
+    start_wifi_scan(publish_callback);
+    start_bluetooth_scan(publish_callback);
   end);
 
   mqtt_client:lwt('/connectivity', 'offline', 2, 1);
